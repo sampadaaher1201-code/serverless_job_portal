@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Job Portal</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 800px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 20px rgba(0,0,0,0.4);
+        }
+        h1 {
+            text-align: center;
+            color: #0f2027;
+        }
+        h2 {
+            border-bottom: 2px solid #2c5364;
+            padding-bottom: 8px;
+            color: #203a43;
+            margin-top: 30px;
+        }
+        button {
+            background: #2c5364;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #203a43;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        #jobs {
+            list-style: none;
+            padding: 0;
+        }
+        #jobs li {
+            background: #f1f1f1;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #2c5364;
+        }
+        #uploadStatus {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🎓 Student Job Portal</h1>
+
+    <!-- VIEW JOBS -->
+    <h2>Available Jobs</h2>
+    <button onclick="getJobs()">Load Jobs</button>
+
+    <!-- Job List -->
+    <ul id="jobs"></ul>
+
+    <!-- APPLY FOR JOB -->
+    <h2>Apply for Job</h2>
+
+    <!-- Auto-filled job title -->
+    <input id="jobTitle" placeholder="Job Title (select a job above)" readonly>
+
+    <input id="fullName" placeholder="Full Name">
+    <input id="email" placeholder="Email">
+    <input type="file" id="resume">
+
+    <button onclick="apply()">apply</button>
+
+    <p id="uploadStatus"></p>
+</div>
+
+<!-- AWS SDK -->
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1520.0.min.js"></script>
+
+<!-- Student JavaScript -->
+<script src="student-scripts.js"></script>
+
+</body>
+</html>

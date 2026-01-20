@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recruiter Dashboard - Post Job</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Recruiter Job Posting Dashboard</h2>
+
+<form id="jobForm">
+  <label for="title">Job Title</label>
+  <input type="text" id="title" required>
+
+  <label for="company">Company</label>
+  <input type="text" id="company" required>
+
+  <label for="location">Location</label>
+  <input type="text" id="location" required>
+
+  <label for="description">Job Description</label>
+  <textarea id="description" rows="5" required></textarea>
+
+  <button type="submit">Post Job</button>
+</form>
+
+<script>
+document.getElementById("jobForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const jobData = {
+    title: document.getElementById("title").value.trim(),
+    company: document.getElementById("company").value.trim(),
+    location: document.getElementById("location").value.trim(),
+    description: document.getElementById("description").value.trim()
+  };
+
+  try {
+    const response = await fetch(
+      "https://lyn4gggc01.execute-api.us-east-1.amazonaws.com/prod",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jobData)
+      }
+    );
+
+    if (response.ok) {
+      const result = await response.json();
+      alert(result.message || "Job posted successfully!");
+      document.getElementById("jobForm").reset();
+    } else {
+      const error = await response.json();
+      alert(error.error || "Error posting job.");
+    }
+  } catch (err) {
+    console.error("Network or server error:", err);
+    alert("An unexpected error occurred. Please try again.");
+  }
+});
+</script>
+
+</body>
+</html>

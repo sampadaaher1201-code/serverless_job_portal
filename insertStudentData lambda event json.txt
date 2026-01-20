@@ -1,0 +1,4 @@
+{
+  "httpMethod": "POST",
+  "body": "{\"studentid\":\"2\",\"name\":\"Varsha\",\"class\":\"A\",\"age\":\"25\"}"
+}

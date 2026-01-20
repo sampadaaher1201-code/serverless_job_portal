@@ -1,0 +1,13 @@
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1710667214549",
+    "Statement": [
+        {
+            "Sid": "Stmt1710667213087",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::devopsmasterbucket1201/*"
+        }
+    ]
+}

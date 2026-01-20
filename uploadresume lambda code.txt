@@ -1,0 +1,59 @@
+import json
+import boto3
+import base64
+import uuid
+
+s3 = boto3.client("s3")
+dynamodb = boto3.resource("dynamodb")
+
+BUCKET = "student-resume-upload-12345"
+TABLE = "jobs"
+
+def lambda_handler(event, context):
+    try:
+        body = json.loads(event["body"])
+
+        title = body["title"]
+        file_name = body["fileName"]
+        file_content = body["file"]
+
+        # Decode base64
+        file_bytes = base64.b64decode(file_content)
+
+        # Create unique S3 filename
+        s3_key = f"resumes/{uuid.uuid4()}-{file_name}"
+
+        # Upload to S3
+        s3.put_object(
+            Bucket=BUCKET,
+            Key=s3_key,
+            Body=file_bytes,
+            ContentType="application/pdf"
+        )
+
+        # S3 URL
+        resume_url = f"https://{BUCKET}.s3.amazonaws.com/{s3_key}"
+
+        # Update DynamoDB
+        table = dynamodb.Table(TABLE)
+        table.update_item(
+            Key={"title": title},
+            UpdateExpression="SET resume = :r",
+            ExpressionAttributeValues={":r": resume_url}
+        )
+
+        return {
+            "statusCode": 200,
+            "headers": {"Access-Control-Allow-Origin": "*"},
+            "body": json.dumps({
+                "message": "Resume uploaded successfully",
+                "resumeUrl": resume_url
+            })
+        }
+
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "headers": {"Access-Control-Allow-Origin": "*"},
+            "body": json.dumps(str(e))
+        }
