@@ -1,0 +1,65 @@
+applyjoblambda code
+
+import json
+import boto3
+import base64
+import uuid
+
+# AWS resources
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table("applications")
+
+s3 = boto3.client("s3")
+BUCKET = "student-resume-upload-12345"
+
+def lambda_handler(event, context):
+
+    # 🔹 1. HANDLE CORS PREFLIGHT (OPTIONS REQUEST)
+    if event.get("httpMethod") == "OPTIONS":
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST",
+                "Access-Control-Allow-Headers": "Content-Type"
+            },
+            "body": ""
+        }
+
+    # 🔹 2. PARSE REQUEST BODY
+    body = json.loads(event.get("body", "{}"))
+
+    # 🔹 3. DECODE FILE
+    file_bytes = base64.b64decode(body["file"])
+    key = f"resumes/{uuid.uuid4()}-{body['fileName']}"
+
+    # 🔹 4. UPLOAD FILE TO S3
+    s3.put_object(
+        Bucket=BUCKET,
+        Key=key,
+        Body=file_bytes
+    )
+
+    # 🔹 5. STORE DATA IN DYNAMODB
+    table.put_item(
+        Item={
+            "applicationId": str(uuid.uuid4()),
+            "jobTitle": body["jobTitle"],
+            "fullName": body["fullName"],
+            "email": body["email"],
+            "resumeKey": key
+        }
+    )
+
+    # 🔹 6. SUCCESS RESPONSE WITH CORS HEADERS
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST",
+            "Access-Control-Allow-Headers": "Content-Type"
+        },
+        "body": json.dumps({
+            "message": "Application submitted successfully"
+        })
+    }
